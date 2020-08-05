@@ -1,0 +1,17 @@
+{
+    "configurations": [
+        {
+            "name": "DevkitA64",
+            "includePath": [
+                "/opt/devkitpro/libnx/include",
+                "/opt/devkitpro/portlibs/switch/include",
+                "libs/libluxio/include",
+                "libs/libluxio/lvgl/lvgl",
+                "include",
+                "source"
+            ],
+            "compilerPath": "/opt/devkitpro/devkitA64/bin/aarch64-none-elf-gcc"
+        }
+    ],
+    "version": 4
+}
