@@ -3,8 +3,6 @@
 #include "lx/debug.hpp"
 #include "lx/ui/lv_helper.hpp"
 
-constexpr auto THEME_COLOR = 0x1976D2;
-
 Theme::Theme() {
     LOGSL("constructing... ");
 

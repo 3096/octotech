@@ -1,3 +1,9 @@
 [submodule "libs/libluxio"]
 	path = libs/libluxio
-	url = https://github.com/3096/libluxio.git
+	url = git@github.com:3096/libluxio.git
+[submodule "overlay/libs/libluxio"]
+	path = overlay/libs/libluxio
+	url = git@github.com:3096/libluxio.git
+[submodule "starlight"]
+	path = starlight
+	url = git@github.com:3096/starlight.git

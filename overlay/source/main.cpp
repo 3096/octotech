@@ -2,8 +2,8 @@
 #include "lx/overlay.hpp"
 #include "lx/ui/controller.hpp"
 #include "lx/util.hpp"
-#include "screens/main_screen.hpp"
-#include "theme.hpp"
+// #include "screens/main_screen.hpp"
+#include "screens/gear_screen.hpp"
 
 extern "C" {
 u32 __nx_applet_type = AppletType_None;
@@ -59,7 +59,7 @@ int main(int argc, char* argv[]) {
     LOG("Main start");
 
     try {
-        lx::ui::Controller::show(MainScreen::getInstance());
+        lx::ui::Controller::show(GearScreen::getInstance());
     } catch (std::runtime_error& e) {
         LOG("runtime_error: %s", e.what());
     }

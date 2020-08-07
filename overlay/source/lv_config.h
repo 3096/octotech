@@ -547,7 +547,7 @@ typedef void * lv_obj_user_data_t;
 #endif
 
 /*Button matrix (dependencies: -)*/
-#define LV_USE_BTNMATRIX     0
+#define LV_USE_BTNMATRIX     1
 
 /*Calendar (dependencies: -)*/
 #define LV_USE_CALENDAR 0
