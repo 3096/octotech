@@ -45,7 +45,7 @@ APP_VERSION	:=	0.0.1
 
 TARGET		:=	octotech
 BUILD		:=	build
-INCLUDES	:=	source include libs/libluxio/include libs/libluxio/lvgl/lvgl
+INCLUDES	:=	source include libs/libluxio/include libs/libluxio/lvgl/lvgl ../starlight/include
 ifneq ($(BUILD),$(notdir $(CURDIR)))
 SOURCES		:=	$(shell find source libs/libluxio/src libs/libluxio/lvgl/lvgl/src -type d)
 endif
@@ -77,13 +77,13 @@ ASFLAGS		:=	-g $(ARCH)
 
 LDFLAGS		:=	-specs=$(DEVKITPRO)/libnx/switch.specs -g $(ARCH) -Wl,-Map,$(notdir $*.map)
 
-LIBS		:=	-lnx
+LIBS		:=	-lnx -lstratosphere
 
 #---------------------------------------------------------------------------------
 # list of directories containing libraries, this must be the top level containing
 # include and lib
 #---------------------------------------------------------------------------------
-LIBDIRS		:= $(PORTLIBS) $(LIBNX)
+LIBDIRS		:= $(PORTLIBS) $(LIBNX) $(SWITCH_USER_LIBS)
 
 
 #---------------------------------------------------------------------------------

@@ -17,15 +17,24 @@ class GearScreen : public lx::ui::IScreen {
 
     static constexpr auto GEAR_KIND_COUNT = 3;
     enum DisplayGearKind { HEAD_GEAR, CLOTHES_GEAR, SHOES_GEAR };
+    // static constexpr auto IN_GAME_GEAR_KIND_MAP = std::array<Cmn::Def::GearKind, GEAR_KIND_COUNT>{
+    //     Cmn::Def::GearKind::cHead, Cmn::Def::GearKind::cClothes, Cmn::Def::GearKind::cShoes};
 
     static constexpr auto GEAR_SKILL_COUNT = 4;
-    using GearSkillStrs = std::array<const char*, GEAR_SKILL_COUNT + 1>;
+    using EquippedGearIds = std::array<int, GEAR_KIND_COUNT>;
 
+    // game
+    EquippedGearIds m_lastEquippedGearIds;
+
+    // ui
     static constexpr auto DISPLAY_GEAR_KINDS = {HEAD_GEAR, CLOTHES_GEAR, SHOES_GEAR};
     static constexpr auto GEAR_KIND_LABEL_STRS = std::array<const char*, GEAR_KIND_COUNT>{"Head", "Clothes", "Shoes"};
 
     static constexpr auto GEAR_SKILL_BUTTON_HEIGHT = 48;
     static constexpr auto GEAR_SKILL_BUTTON_SINK = 30;
+
+    using GearSkillStrs = std::array<const char*, GEAR_SKILL_COUNT + 1>;
+    static constexpr auto GEAR_SKILL_UNAVAILABLE_STR = "-";
 
     std::array<lv_obj_t*, GEAR_KIND_COUNT> m_displayGearLabels;
     std::array<lv_obj_t*, GEAR_KIND_COUNT> m_displayGearButtons;

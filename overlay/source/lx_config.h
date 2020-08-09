@@ -30,7 +30,7 @@
     {KEY_R, LV_KEY_ENTER},              \
 }
 
-#define DEFAULT_ACTION_KEY_MAP          { .goBack = KEY_B, .toggleOverlay = KEY_DUP | KEY_RSTICK_UP }
+#define DEFAULT_ACTION_KEY_MAP          { .goBack = KEY_B | KEY_X, .toggleOverlay = KEY_DUP | KEY_RSTICK_UP }
 
 // debug options
 #define DEBUG_LOG_FILE

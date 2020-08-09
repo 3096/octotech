@@ -1,5 +1,7 @@
 #include "gear_screen.hpp"
 
+#include "../game/gear.hpp"
+#include "../game/save.hpp"
 #include "../theme.hpp"
 
 GearScreen GearScreen::s_instance;
@@ -34,9 +36,54 @@ GearScreen::GearScreen() : LOGCONSTRUCT m_basicScreen(*this) {
 GearScreen::~GearScreen() {}
 
 void GearScreen::procFrame() {
-    for (auto gearKind : DISPLAY_GEAR_KINDS) {
-        m_displayGearsSkills[gearKind] = {"0", "0", "0", "0", ""};  // temp:
-        lv_btnmatrix_set_map(m_displayGearButtons[gearKind], m_displayGearsSkills[gearKind].data());
+    if (MemoryReader::gameIsRunning()) {
+        auto saveDataCmnDataBuffer = save::getSaveDataCmnData();
+        auto& saveDataCmnData = *reinterpret_cast<Cmn::SaveDataCmn::SaveDataCmnData*>(saveDataCmnDataBuffer.get());
+
+        auto curEquippedGearIds = EquippedGearIds{saveDataCmnData.equippedHeadGearId,
+                                                  saveDataCmnData.equippedClothesId, saveDataCmnData.equippedShoesId};
+
+        for (auto gearKind : DISPLAY_GEAR_KINDS) {
+            if (m_lastEquippedGearIds[gearKind] != curEquippedGearIds[gearKind]) {
+                Cmn::SaveDataCmn::SaveDataCmnData::GearKindInventory* p_curGearInventory = nullptr;
+                switch (gearKind) {
+                    case HEAD_GEAR:
+                        p_curGearInventory = &saveDataCmnData.headGearInventory;
+                        break;
+                    case CLOTHES_GEAR:
+                        p_curGearInventory = &saveDataCmnData.clothesInventory;
+                        break;
+                    case SHOES_GEAR:
+                        p_curGearInventory = &saveDataCmnData.shoeInventory;
+                        break;
+                }
+
+                for (auto idx = 0u; idx < p_curGearInventory->size(); idx++) {
+                    auto curGear = (*p_curGearInventory)[idx].gear;
+                    if (curGear.mGearId != curEquippedGearIds[gearKind]) {
+                        continue;
+                    }
+
+                    m_displayGearsSkills[gearKind] = {
+                        gear::GEAR_SKILL_NAME_MAP.at(curGear.mMainSkillId),
+                        gear::GEAR_SKILL_NAME_MAP.at(curGear.mSubSkillIds[0]),
+                        gear::GEAR_SKILL_NAME_MAP.at(curGear.mSubSkillIds[1]),
+                        gear::GEAR_SKILL_NAME_MAP.at(curGear.mSubSkillIds[2]),
+                        lx::ui::lv_btnmatrix::LV_BTNMATRIX_END_STR,
+                    };
+
+                    lv_btnmatrix_set_map(m_displayGearButtons[gearKind], m_displayGearsSkills[gearKind].data());
+                    break;
+                }
+            }
+        }
+    } else {
+        for (auto gearKind : DISPLAY_GEAR_KINDS) {
+            m_displayGearsSkills[gearKind] = {GEAR_SKILL_UNAVAILABLE_STR, GEAR_SKILL_UNAVAILABLE_STR,
+                                              GEAR_SKILL_UNAVAILABLE_STR, GEAR_SKILL_UNAVAILABLE_STR,
+                                              lx::ui::lv_btnmatrix::LV_BTNMATRIX_END_STR};  // temp:
+            lv_btnmatrix_set_map(m_displayGearButtons[gearKind], m_displayGearsSkills[gearKind].data());
+        }
     }
 
     m_basicScreen.processReturn();
