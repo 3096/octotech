@@ -1,9 +1,9 @@
-# luxio-template
-an overlay template using libluxio
+# OctoTech V2
+"making rocks float, thats octo tech" -- Craig Cuttlefish
 
 ## License
 
-    luxio-template
+    OctoTech V2
     Copyright (C) 2020  3096
 
     This program is free software; you can redistribute it and/or modify
