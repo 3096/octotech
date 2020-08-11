@@ -26,12 +26,11 @@
     {KEY_DDOWN, LV_KEY_DOWN},           \
     {KEY_DRIGHT, LV_KEY_RIGHT},         \
     {KEY_DLEFT, LV_KEY_LEFT},           \
-    {KEY_L, LV_KEY_ESC},                \
-    {KEY_R, LV_KEY_ENTER},              \
+    {KEY_ZR, LV_KEY_ENTER},             \
 }
 
-#define DEFAULT_ACTION_KEY_MAP          { .goBack = KEY_B | KEY_X, .toggleOverlay = KEY_DUP | KEY_RSTICK_UP }
+#define DEFAULT_ACTION_KEY_MAP          { .goBack = KEY_ZL | KEY_B, .toggleOverlay = KEY_DLEFT | KEY_RSTICK_RIGHT }
 
 // debug options
-#define DEBUG_LOG_FILE
+// #define DEBUG_LOG_FILE
 #define DEBUG_NX_LINK

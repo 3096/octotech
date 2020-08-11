@@ -12,12 +12,16 @@ static inline auto getSaveData() {
         *reinterpret_cast<Cmn::SaveData**>(MemoryReader::readDataFromMain<Cmn::SaveData*>(SP_SAVEDATA_OFFSET).data()));
 }
 
+static inline auto getSaveDataCmnDataAddress() {
+    return reinterpret_cast<Cmn::SaveDataCmn*>(
+               MemoryReader::readDataFromAddr<Cmn::SaveDataCmn>(
+                   reinterpret_cast<Cmn::SaveData*>(getSaveData().data())->pSaveDataCmn)
+                   .data())
+        ->pData;
+}
+
 static inline auto getSaveDataCmnData() {
-    return MemoryReader::readBufferFromAddr<Cmn::SaveDataCmn::SaveDataCmnData>(
-        reinterpret_cast<Cmn::SaveDataCmn*>(MemoryReader::readDataFromAddr<Cmn::SaveDataCmn>(
-                                                reinterpret_cast<Cmn::SaveData*>(getSaveData().data())->pSaveDataCmn)
-                                                .data())
-            ->pData);
+    return MemoryReader::readBufferFromAddr<Cmn::SaveDataCmn::SaveDataCmnData>(getSaveDataCmnDataAddress());
 }
 
 }  // namespace save

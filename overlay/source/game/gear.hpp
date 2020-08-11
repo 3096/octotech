@@ -1,11 +1,13 @@
 #pragma once
 
-#include <unordered_map>
+#include <map>
+
+#include "Cmn/Def/Gear.h"
 
 namespace gear {
 
 static constexpr auto GEAR_SKILL_COUNT = 26;
-static const auto GEAR_SKILL_NAME_MAP = std::unordered_map<int, const char*>{
+static const auto GEAR_SKILL_NAME_MAP = std::map<decltype(Cmn::Def::Gear::mMainSkillId), const char*>{
     {-2, "Blank"},    //
     {-1, "Unknown"},  //
     {0, "ISMn"},      // MainInk_Save
@@ -35,5 +37,24 @@ static const auto GEAR_SKILL_NAME_MAP = std::unordered_map<int, const char*>{
     {110, "ObjS"},    // ObjectEffect_Up
     {111, "DRol"},    // SomersaultLanding
 };
+
+inline auto skillIdIsValid(decltype(Cmn::Def::Gear::mMainSkillId) skillId, decltype(Cmn::Def::Gear::mGearId) gearId,
+                           Cmn::Def::GearKind gearKind) -> bool {
+    // TODO: check for actual valid ids
+
+    if (skillId < 0) return false;
+    if (skillId <= 13) return true;
+
+    switch (gearKind) {
+        case Cmn::Def::GearKind::cHead:
+            return 100 <= skillId and skillId <= 103;
+        case Cmn::Def::GearKind::cClothes:
+            return 104 <= skillId and skillId <= 108;
+        case Cmn::Def::GearKind::cShoes:
+            return 109 <= skillId and skillId <= 111;
+        default:
+            return false;
+    }
+}
 
 }  // namespace gear

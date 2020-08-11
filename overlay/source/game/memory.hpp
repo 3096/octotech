@@ -61,9 +61,14 @@ class MemoryReader {
 
     template <typename T>
     inline auto readBuffer_(size_t offset) {
-        auto result = std::make_shared<uint8_t>(sizeof(T));
+        auto result = std::shared_ptr<uint8_t>(reinterpret_cast<uint8_t*>(malloc(sizeof(T))));
         TRY_THROW(dmntchtReadCheatProcessMemory(offset, result.get(), sizeof(T)));
         return result;
+    }
+
+    template <typename T>
+    inline auto write_(size_t offset, T& data) {
+        TRY_THROW(dmntchtWriteCheatProcessMemory(offset, &data, sizeof(T)));
     }
 
    public:
@@ -81,7 +86,12 @@ class MemoryReader {
     }
 
     template <typename T>
-    static inline auto readBufferFromAddr(void* address) {
+    static inline auto readBufferFromAddr(T* address) {
         return getInstance().readBuffer_<T>(reinterpret_cast<size_t>(address));
+    }
+
+    template <typename T>
+    static inline auto writeToAddr(uint64_t address, T& data) {
+        return getInstance().write_<T>(reinterpret_cast<size_t>(address), data);
     }
 };
