@@ -46,7 +46,9 @@ GearScreen::GearScreen() : LOGCONSTRUCT m_basicScreen(*this) {
 GearScreen::~GearScreen() {}
 
 void GearScreen::procFrame() {
-    m_basicScreen.processReturn();
+    if (lx::ui::Controller::keyComboIsJustPressed(KEY_L | KEY_ZL)) {
+        return lx::ui::Controller::stop();
+    }
 
     // process up/down key inputs to switch gear
     auto lvInputGroup = m_basicScreen.getLvInputGroup();

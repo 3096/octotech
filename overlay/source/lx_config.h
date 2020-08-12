@@ -29,7 +29,7 @@
     {KEY_ZR, LV_KEY_ENTER},             \
 }
 
-#define DEFAULT_ACTION_KEY_MAP          { .goBack = KEY_ZL | KEY_B, .toggleOverlay = KEY_DLEFT | KEY_RSTICK_RIGHT }
+#define DEFAULT_ACTION_KEY_MAP          { .goBack = KEY_ZL, .toggleOverlay = KEY_DLEFT | KEY_RSTICK_UP }
 
 // debug options
 // #define DEBUG_LOG_FILE
