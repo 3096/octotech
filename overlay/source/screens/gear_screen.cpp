@@ -33,6 +33,10 @@ GearScreen::GearScreen() : LOGCONSTRUCT m_basicScreen(*this) {
         m_displayGearButtons[gearKind] = p_btnMatrix;
         lv_group_add_obj(m_basicScreen.getLvInputGroup(), p_btnMatrix);
         lv_obj_set_event_cb(p_btnMatrix, handleGearSkillButtonClick_);
+        m_displayGearsButtonMaps[gearKind][4] = lx::ui::lv_btnmatrix::LV_BTNMATRIX_NEW_ROW_STR;
+        m_displayGearsButtonMaps[gearKind][5] = GEAR_EDIT_ALL_SUB_STR;
+        m_displayGearsButtonMaps[gearKind][6] = GEAR_EDIT_ALL_STR;
+        m_displayGearsButtonMaps[gearKind][7] = lx::ui::lv_btnmatrix::LV_BTNMATRIX_END_STR;
     }
 
     LOG("done");
@@ -77,17 +81,14 @@ void GearScreen::procFrame() {
                     continue;
                 }
 
-                m_equippedSkillOffsets[gearKind] = (size_t)&curGear.mMainSkillId - (size_t)&saveDataCmnData;
+                m_equippedGearOffsets[gearKind] = (size_t)&curGear - (size_t)&saveDataCmnData;
 
-                m_displayGearsSkills[gearKind] = {
-                    gear::GEAR_SKILL_NAME_MAP.at(curGear.mMainSkillId),
-                    gear::GEAR_SKILL_NAME_MAP.at(curGear.mSubSkillIds[0]),
-                    gear::GEAR_SKILL_NAME_MAP.at(curGear.mSubSkillIds[1]),
-                    gear::GEAR_SKILL_NAME_MAP.at(curGear.mSubSkillIds[2]),
-                    lx::ui::lv_btnmatrix::LV_BTNMATRIX_END_STR,
-                };
+                m_displayGearsButtonMaps[gearKind][0] = gear::GEAR_SKILL_NAME_MAP.at(curGear.mMainSkillId);
+                m_displayGearsButtonMaps[gearKind][1] = gear::GEAR_SKILL_NAME_MAP.at(curGear.mSubSkillIds[0]);
+                m_displayGearsButtonMaps[gearKind][2] = gear::GEAR_SKILL_NAME_MAP.at(curGear.mSubSkillIds[1]);
+                m_displayGearsButtonMaps[gearKind][3] = gear::GEAR_SKILL_NAME_MAP.at(curGear.mSubSkillIds[2]);
 
-                lv_btnmatrix_set_map(m_displayGearButtons[gearKind], m_displayGearsSkills[gearKind].data());
+                lv_btnmatrix_set_map(m_displayGearButtons[gearKind], m_displayGearsButtonMaps[gearKind].data());
                 break;
             }
 
@@ -96,10 +97,11 @@ void GearScreen::procFrame() {
     } else {
         // set gear status to unavailable
         for (auto gearKind : DISPLAY_GEAR_KINDS) {
-            m_displayGearsSkills[gearKind] = {GEAR_SKILL_UNAVAILABLE_STR, GEAR_SKILL_UNAVAILABLE_STR,
-                                              GEAR_SKILL_UNAVAILABLE_STR, GEAR_SKILL_UNAVAILABLE_STR,
-                                              lx::ui::lv_btnmatrix::LV_BTNMATRIX_END_STR};
-            lv_btnmatrix_set_map(m_displayGearButtons[gearKind], m_displayGearsSkills[gearKind].data());
+            m_displayGearsButtonMaps[gearKind][0] = GEAR_SKILL_UNAVAILABLE_STR;
+            m_displayGearsButtonMaps[gearKind][1] = GEAR_SKILL_UNAVAILABLE_STR;
+            m_displayGearsButtonMaps[gearKind][2] = GEAR_SKILL_UNAVAILABLE_STR;
+            m_displayGearsButtonMaps[gearKind][3] = GEAR_SKILL_UNAVAILABLE_STR;
+            lv_btnmatrix_set_map(m_displayGearButtons[gearKind], m_displayGearsButtonMaps[gearKind].data());
         }
     }
 
@@ -119,9 +121,8 @@ void GearScreen::handleGearSkillButtonClick_(lv_obj_t* p_btnMatrix, lv_event_t e
     lx::ui::Controller::show(SkillScreen::getInstance(
         s_instance.m_lastEquippedGearIds[curDisplayGearKindIdx], IN_GAME_GEAR_KIND_MAP[curDisplayGearKindIdx],
         reinterpret_cast<uint64_t>(save::getSaveDataCmnDataAddress()) +
-            s_instance.m_equippedSkillOffsets[curDisplayGearKindIdx] +
-            lv_btnmatrix_get_active_btn(p_btnMatrix) * sizeof(Cmn::Def::Gear::mMainSkillId),
-        1));
+            s_instance.m_equippedGearOffsets[curDisplayGearKindIdx],
+        static_cast<gear::EditingSlot>(lv_btnmatrix_get_active_btn(p_btnMatrix))));
 
     s_instance.m_lastEquippedGearIds[curDisplayGearKindIdx] = -1;  // invalidate current gear for reloading skills
 }

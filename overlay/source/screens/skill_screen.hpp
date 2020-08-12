@@ -18,14 +18,14 @@ class SkillScreen : public lx::ui::IScreen {
     //
     decltype(Cmn::Def::Gear::mGearId) m_curGearId;
     Cmn::Def::GearKind m_curGearKind;
-    uint64_t m_skillWriteAddress;
+    uint64_t m_gearWriteAddress;
 
     // ui
-    static constexpr auto BUTTONS_PER_LINE = 5;
+    static constexpr auto BUTTONS_PER_LINE = 4;
     lv_obj_t* mp_buttonMatrix;
     std::vector<const char*> m_buttonMatrixStrs;
     std::vector<decltype(Cmn::Def::Gear::mMainSkillId)> m_buttonSkillIds;
-    size_t m_writingSlotCount;
+    gear::EditingSlot m_editingSlot;
 
     static void handleButtonClick_(lv_obj_t* p_btnMatrix, lv_event_t event);
 
@@ -40,11 +40,11 @@ class SkillScreen : public lx::ui::IScreen {
 
    public:
     static inline SkillScreen& getInstance(decltype(Cmn::Def::Gear::mGearId) gearId, Cmn::Def::GearKind gearKind,
-                                           uint64_t skillWriteAddress, size_t writingSlotCount) {
+                                           uint64_t gearWriteAddress, gear::EditingSlot editingSlot) {
         s_instance.m_curGearId = gearId;
         s_instance.m_curGearKind = gearKind;
-        s_instance.m_skillWriteAddress = skillWriteAddress;
-        s_instance.m_writingSlotCount = writingSlotCount;
+        s_instance.m_gearWriteAddress = gearWriteAddress;
+        s_instance.m_editingSlot = editingSlot;
         return s_instance;
     }
 };

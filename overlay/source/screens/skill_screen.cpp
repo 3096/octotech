@@ -38,7 +38,6 @@ void SkillScreen::onMount(lx::ui::IScreen* prevScreen) {
 
         if (curCol == BUTTONS_PER_LINE) {
             m_buttonMatrixStrs.push_back(lx::ui::lv_btnmatrix::LV_BTNMATRIX_NEW_ROW_STR);
-            m_buttonSkillIds.push_back(-2);
             curCol = 0;
         }
 
@@ -59,9 +58,47 @@ void SkillScreen::handleButtonClick_(lv_obj_t* p_btnMatrix, lv_event_t event) {
     if (event != LV_EVENT_CLICKED) return;
 
     auto skillToWrite = s_instance.m_buttonSkillIds[lv_btnmatrix_get_active_btn(p_btnMatrix)];
-    for (auto i = 0u; i < s_instance.m_writingSlotCount; i++) {
-        MemoryReader::writeToAddr<decltype(skillToWrite)>(
-            s_instance.m_skillWriteAddress + sizeof(decltype(skillToWrite)) * i, skillToWrite);
+
+    auto addressToWrite = s_instance.m_gearWriteAddress + offsetof(Cmn::Def::Gear, mMainSkillId);
+    auto writingSlotCount = 0;
+    auto totalSlotCount = decltype(Cmn::Def::Gear::mUnlockedSlotCount){};
+    switch (s_instance.m_editingSlot) {
+        case gear::EditingSlot::ALL:
+            writingSlotCount = 4;
+            totalSlotCount = 4;
+            break;
+
+        case gear::EditingSlot::ALL_SUB:
+            addressToWrite += sizeof(decltype(skillToWrite));
+            writingSlotCount = 3;
+            totalSlotCount = 4;
+            break;
+
+        default:
+            addressToWrite += sizeof(decltype(skillToWrite)) * static_cast<int>(s_instance.m_editingSlot);
+            writingSlotCount = 1;
+            totalSlotCount = static_cast<int>(s_instance.m_editingSlot) + 1;
+    }
+
+    // check and write slot counts
+    auto curGearData = MemoryReader::readDataFromAddr<Cmn::Def::Gear>(
+        reinterpret_cast<Cmn::Def::Gear*>(s_instance.m_gearWriteAddress));
+    auto& curGear = *reinterpret_cast<Cmn::Def::Gear*>(&curGearData);
+
+    if (curGear.mUnlockedSlotCount < totalSlotCount) {
+        MemoryReader::writeToAddr<decltype(curGear.mUnlockedSlotCount)>(
+            s_instance.m_gearWriteAddress + offsetof(Cmn::Def::Gear, mUnlockedSlotCount), totalSlotCount);
+    }
+
+    if (curGear.mUnlockedSlotCount < totalSlotCount) {
+        MemoryReader::writeToAddr<decltype(curGear.mUnlockedSlotCount)>(
+            s_instance.m_gearWriteAddress + offsetof(Cmn::Def::Gear, mUnlockedSlotCount), totalSlotCount);
+    }
+
+    // write the skills
+    for (auto i = 0u; i < writingSlotCount; i++) {
+        MemoryReader::writeToAddr<decltype(skillToWrite)>(addressToWrite + sizeof(decltype(skillToWrite)) * i,
+                                                          skillToWrite);
     }
 
     s_instance.m_basicScreen.returnToPreviousScreen();

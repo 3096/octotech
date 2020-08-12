@@ -1,12 +1,18 @@
 #pragma once
 
+#include <list>
 #include <map>
+#include <unordered_set>
 
 #include "Cmn/Def/Gear.h"
 
 namespace gear {
 
-static constexpr auto GEAR_SKILL_COUNT = 26;
+static constexpr auto GEAR_SKILL_COUNT = 4;
+static constexpr auto GEAR_SUB_SKILL_COUNT = 3;
+
+enum class EditingSlot { MAIN, SUB0, SUB1, SUB2, ALL_SUB, ALL };
+
 static const auto GEAR_SKILL_NAME_MAP = std::map<decltype(Cmn::Def::Gear::mMainSkillId), const char*>{
     {-2, "Blank"},    //
     {-1, "Unknown"},  //
@@ -38,6 +44,11 @@ static const auto GEAR_SKILL_NAME_MAP = std::map<decltype(Cmn::Def::Gear::mMainS
     {111, "DRol"},    // SomersaultLanding
 };
 
+static constexpr auto SUB_LEGAL_SKILLS = {
+    0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13,
+};
+static const auto SUB_LEGAL_SKILL_SET = std::unordered_set<decltype(Cmn::Def::Gear::mMainSkillId)>{SUB_LEGAL_SKILLS};
+
 inline auto skillIdIsValid(decltype(Cmn::Def::Gear::mMainSkillId) skillId, decltype(Cmn::Def::Gear::mGearId) gearId,
                            Cmn::Def::GearKind gearKind) -> bool {
     // TODO: check for actual valid ids
@@ -56,5 +67,8 @@ inline auto skillIdIsValid(decltype(Cmn::Def::Gear::mMainSkillId) skillId, declt
             return false;
     }
 }
+
+auto getGearSkills(decltype(Cmn::Def::Gear::mGearId) gearId, Cmn::Def::GearKind gearKind, EditingSlot editingSlot)
+    -> std::list<decltype(Cmn::Def::Gear::mMainSkillId)>;
 
 }  // namespace gear
