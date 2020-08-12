@@ -11,7 +11,8 @@ SkillScreen::SkillScreen() : LOGCONSTRUCT m_basicScreen(*this) {
     m_basicScreen.addLvObjPositionUpdater(p_window, lx::ui::lv_win::updateFitParent);
     lv_win_set_title(p_window, "  Select Ability");
 
-    mp_buttonMatrix = lx::ui::lv_btnmatrix::create(p_window);
+    mp_buttonMatrix =
+        lx::ui::lv_btnmatrix::create(p_window, Theme::getBtnMatrixBgStyle(), Theme::getBtnMatrixBtnStyle());
     m_basicScreen.addLvObjPositionUpdater(mp_buttonMatrix, [p_window](lv_obj_t* p_btnMatrix) {
         lv_obj_set_size(p_btnMatrix, lx::ui::size::getScreenInnerWidth(), lx::ui::lv_win::getWinInnerHeight());
         lv_obj_align(p_btnMatrix, p_window, LV_ALIGN_CENTER, 0, lx::ui::lv_win::HEADER_HEIGHT() / 2);
@@ -56,7 +57,7 @@ void SkillScreen::handleButtonClick_(lv_obj_t* p_btnMatrix, lv_event_t event) {
     auto skillToWrite = s_instance.m_buttonSkillIds[lv_btnmatrix_get_active_btn(p_btnMatrix)];
 
     auto addressToWrite = s_instance.m_gearWriteAddress + offsetof(Cmn::Def::Gear, mMainSkillId);
-    auto writingSlotCount = 0;
+    auto writingSlotCount = 0u;
     auto totalSlotCount = decltype(Cmn::Def::Gear::mUnlockedSlotCount){};
     switch (s_instance.m_editingSlot) {
         case gear::EditingSlot::ALL:

@@ -55,6 +55,8 @@ class GearScreen : public lx::ui::IScreen {
 
     static void handleGearSkillButtonClick_(lv_obj_t* btnm, lv_event_t event);
 
+    void setGearUnavailable_();
+
     // implement IScreen
     virtual inline void onMount(lx::ui::IScreen* prevScreen) override { return m_basicScreen.onMount(nullptr); }
     virtual inline void onToggleHide() override { m_lastEquippedGearIds = {}; }
@@ -64,9 +66,6 @@ class GearScreen : public lx::ui::IScreen {
 
     virtual inline lv_obj_t* getLvScreenObj() override { return m_basicScreen.getLvScreenObj(); }
     virtual inline lv_group_t* getLvInputGroup() override { return m_basicScreen.getLvInputGroup(); }
-
-    static const lx::LvKeyMap LV_KEY_MAP;
-    virtual inline const lx::LvKeyMap& getLvKeyMap() override { return LV_KEY_MAP; }
 
    public:
     static inline GearScreen& getInstance() { return s_instance; }

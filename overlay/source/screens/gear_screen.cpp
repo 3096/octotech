@@ -23,7 +23,8 @@ GearScreen::GearScreen() : LOGCONSTRUCT m_basicScreen(*this) {
         lv_label_set_text(p_label, GEAR_KIND_LABEL_STRS[gearKind]);
         m_displayGearLabels[gearKind] = p_label;
 
-        auto p_btnMatrix = lx::ui::lv_btnmatrix::create(p_window);
+        auto p_btnMatrix =
+            lx::ui::lv_btnmatrix::create(p_window, Theme::getBtnMatrixBgStyle(), Theme::getBtnMatrixBtnStyle());
         m_basicScreen.addLvObjPositionUpdater(p_btnMatrix, [p_window, gearKind](lv_obj_t* p_btnMatrix) {
             lv_obj_set_size(p_btnMatrix, lx::ui::size::getScreenWidth() - lx::ui::size::MARGIN() * 2,
                             lx::ui::size::coord(GEAR_SKILL_BUTTON_HEIGHT));
@@ -44,13 +45,26 @@ GearScreen::GearScreen() : LOGCONSTRUCT m_basicScreen(*this) {
 
 GearScreen::~GearScreen() {}
 
-const lx::LvKeyMap GearScreen::LV_KEY_MAP = {
-    {KEY_DUP, LV_KEY_PREV},   {KEY_DDOWN, LV_KEY_NEXT}, {KEY_DRIGHT, LV_KEY_RIGHT},
-    {KEY_DLEFT, LV_KEY_LEFT}, {KEY_ZR, LV_KEY_ENTER},
-};
-
 void GearScreen::procFrame() {
-    if (MemoryReader::gameIsRunning()) {
+    m_basicScreen.processReturn();
+
+    // process up/down key inputs to switch gear
+    auto lvInputGroup = m_basicScreen.getLvInputGroup();
+    if (lx::ui::Controller::keyComboIsJustPressed(KEY_DDOWN) and
+        lv_btnmatrix_get_active_btn(lv_group_get_focused(lvInputGroup)) >= gear::GEAR_SKILL_COUNT) {
+        lv_group_focus_next(lvInputGroup);
+
+    } else if (lx::ui::Controller::keyComboIsJustPressed(KEY_DUP) and
+               lv_btnmatrix_get_active_btn(lv_group_get_focused(lvInputGroup)) < gear::GEAR_SKILL_COUNT) {
+        lv_group_focus_prev(lvInputGroup);
+    }
+
+    // update gear
+    if (not MemoryReader::gameIsRunning()) {
+        return setGearUnavailable_();
+    }
+
+    try {
         auto saveDataCmnDataBuffer = save::getSaveDataCmnData();
         auto& saveDataCmnData = *reinterpret_cast<Cmn::SaveDataCmn::SaveDataCmnData*>(saveDataCmnDataBuffer.get());
 
@@ -94,18 +108,20 @@ void GearScreen::procFrame() {
 
             m_lastEquippedGearIds[gearKind] = curEquippedGearIds[gearKind];
         }
-    } else {
-        // set gear status to unavailable
-        for (auto gearKind : DISPLAY_GEAR_KINDS) {
-            m_displayGearsButtonMaps[gearKind][0] = GEAR_SKILL_UNAVAILABLE_STR;
-            m_displayGearsButtonMaps[gearKind][1] = GEAR_SKILL_UNAVAILABLE_STR;
-            m_displayGearsButtonMaps[gearKind][2] = GEAR_SKILL_UNAVAILABLE_STR;
-            m_displayGearsButtonMaps[gearKind][3] = GEAR_SKILL_UNAVAILABLE_STR;
-            lv_btnmatrix_set_map(m_displayGearButtons[gearKind], m_displayGearsButtonMaps[gearKind].data());
-        }
+    } catch (std::runtime_error& e) {
+        setGearUnavailable_();
     }
+}
 
-    m_basicScreen.processReturn();
+void GearScreen::setGearUnavailable_() {
+    for (auto gearKind : DISPLAY_GEAR_KINDS) {
+        m_displayGearsButtonMaps[gearKind][0] = GEAR_SKILL_UNAVAILABLE_STR;
+        m_displayGearsButtonMaps[gearKind][1] = GEAR_SKILL_UNAVAILABLE_STR;
+        m_displayGearsButtonMaps[gearKind][2] = GEAR_SKILL_UNAVAILABLE_STR;
+        m_displayGearsButtonMaps[gearKind][3] = GEAR_SKILL_UNAVAILABLE_STR;
+        lv_btnmatrix_set_map(m_displayGearButtons[gearKind], m_displayGearsButtonMaps[gearKind].data());
+    }
+    m_lastEquippedGearIds = {};
 }
 
 void GearScreen::handleGearSkillButtonClick_(lv_obj_t* p_btnMatrix, lv_event_t event) {
