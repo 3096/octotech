@@ -13,6 +13,8 @@ static constexpr auto GEAR_SUB_SKILL_COUNT = 3;
 
 enum class EditingSlot { MAIN, SUB0, SUB1, SUB2, ALL_SUB, ALL };
 
+static constexpr auto MAIN_EXCLUSIVE_SKILL_ID_START = 100;
+
 static const auto GEAR_SKILL_NAME_MAP = std::map<decltype(Cmn::Def::Gear::mMainSkillId), const char*>{
     {-2, "Blank"},    //
     {-1, "Unknown"},  //
@@ -49,26 +51,26 @@ static constexpr auto SUB_LEGAL_SKILLS = {
 };
 static const auto SUB_LEGAL_SKILL_SET = std::unordered_set<decltype(Cmn::Def::Gear::mMainSkillId)>{SUB_LEGAL_SKILLS};
 
-inline auto skillIdIsValid(decltype(Cmn::Def::Gear::mMainSkillId) skillId, decltype(Cmn::Def::Gear::mGearId) gearId,
-                           Cmn::Def::GearKind gearKind) -> bool {
-    // TODO: check for actual valid ids
+// inline auto skillIdIsValid(decltype(Cmn::Def::Gear::mMainSkillId) skillId, decltype(Cmn::Def::Gear::mGearId) gearId,
+//                            Cmn::Def::GearKind gearKind) -> bool {
+//     if (skillId < 0) return false;
+//     if (skillId <= 13) return true;
 
-    if (skillId < 0) return false;
-    if (skillId <= 13) return true;
+//     switch (gearKind) {
+//         case Cmn::Def::GearKind::cHead:
+//             return 100 <= skillId and skillId <= 103;
+//         case Cmn::Def::GearKind::cClothes:
+//             return 104 <= skillId and skillId <= 108;
+//         case Cmn::Def::GearKind::cShoes:
+//             return 109 <= skillId and skillId <= 111;
+//         default:
+//             return false;
+//     }
+// }
 
-    switch (gearKind) {
-        case Cmn::Def::GearKind::cHead:
-            return 100 <= skillId and skillId <= 103;
-        case Cmn::Def::GearKind::cClothes:
-            return 104 <= skillId and skillId <= 108;
-        case Cmn::Def::GearKind::cShoes:
-            return 109 <= skillId and skillId <= 111;
-        default:
-            return false;
-    }
-}
+using SkillList = std::list<decltype(Cmn::Def::Gear::mMainSkillId)>;
 
 auto getGearSkills(decltype(Cmn::Def::Gear::mGearId) gearId, Cmn::Def::GearKind gearKind, EditingSlot editingSlot)
-    -> std::list<decltype(Cmn::Def::Gear::mMainSkillId)>;
+    -> SkillList;
 
 }  // namespace gear

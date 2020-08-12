@@ -31,18 +31,14 @@ void SkillScreen::onMount(lx::ui::IScreen* prevScreen) {
     m_buttonMatrixStrs.clear();
     m_buttonSkillIds.clear();
     auto curCol = 0;
-    for (auto& skillIdEntry : gear::GEAR_SKILL_NAME_MAP) {
-        if (not gear::skillIdIsValid(skillIdEntry.first, m_curGearId, m_curGearKind)) {
-            continue;
-        }
-
+    for (auto skillId : gear::getGearSkills(m_curGearId, m_curGearKind, m_editingSlot)) {
         if (curCol == BUTTONS_PER_LINE) {
             m_buttonMatrixStrs.push_back(lx::ui::lv_btnmatrix::LV_BTNMATRIX_NEW_ROW_STR);
             curCol = 0;
         }
 
-        m_buttonMatrixStrs.push_back(skillIdEntry.second);
-        m_buttonSkillIds.push_back(skillIdEntry.first);
+        m_buttonSkillIds.push_back(skillId);
+        m_buttonMatrixStrs.push_back(gear::GEAR_SKILL_NAME_MAP.at(skillId));
 
         curCol++;
     }

@@ -26,10 +26,11 @@ void __libnx_initheap(void) {
 
 void __appInit(void) {
     // Init services
-    if (R_FAILED(smInitialize())) fatalThrow(MAKERESULT(Module_Libnx, LibnxError_InitFail_SM));
-    if (R_FAILED(hidInitialize())) fatalThrow(MAKERESULT(Module_Libnx, LibnxError_InitFail_HID));
-    if (R_FAILED(fsInitialize())) fatalThrow(MAKERESULT(Module_Libnx, LibnxError_InitFail_FS));
-    if (R_FAILED(fsdevMountSdmc())) fatalThrow(0x5D);
+    TRY_FATAL(smInitialize());
+    TRY_FATAL(hidInitialize());
+    TRY_FATAL(fsInitialize());
+    TRY_FATAL(fsdevMountSdmc());
+    TRY_FATAL(romfsMountFromFsdev("sdmc:/atmosphere/contents/020000100D0A0906/romfs.bin", 0, "romfs"));
 
     auto socketConfig = SocketInitConfig{.bsdsockets_version = 1,
                                          .tcp_tx_buf_size = 0x800,
@@ -49,6 +50,7 @@ void __appExit(void) {
     // Cleanup services.
     lx::debugExit();
     socketExit();
+    romfsExit();
     fsdevUnmountAll();
     fsExit();
     hidExit();
