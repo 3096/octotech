@@ -31,17 +31,26 @@ void SkillScreen::onMount(lx::ui::IScreen* prevScreen) {
 
     m_buttonMatrixStrs.clear();
     m_buttonSkillIds.clear();
-    auto curCol = 0;
-    for (auto skillId : gear::getGearSkills(m_curGearId, m_curGearKind, m_editingSlot)) {
-        if (curCol == BUTTONS_PER_LINE) {
-            m_buttonMatrixStrs.push_back(lx::ui::lv_btnmatrix::LV_BTNMATRIX_NEW_ROW_STR);
-            curCol = 0;
+
+    auto skillList = gear::getGearSkills(m_curGearId, m_curGearKind, m_editingSlot);
+
+    if (skillList.empty()) {
+        m_buttonSkillIds.push_back(-1);
+        m_buttonMatrixStrs.push_back(NO_SKILL_STR);
+
+    } else {
+        auto curCol = 0;
+        for (auto skillId : skillList) {
+            if (curCol == BUTTONS_PER_LINE) {
+                m_buttonMatrixStrs.push_back(lx::ui::lv_btnmatrix::LV_BTNMATRIX_NEW_ROW_STR);
+                curCol = 0;
+            }
+
+            m_buttonSkillIds.push_back(skillId);
+            m_buttonMatrixStrs.push_back(gear::GEAR_SKILL_NAME_MAP.at(skillId));
+
+            curCol++;
         }
-
-        m_buttonSkillIds.push_back(skillId);
-        m_buttonMatrixStrs.push_back(gear::GEAR_SKILL_NAME_MAP.at(skillId));
-
-        curCol++;
     }
     m_buttonMatrixStrs.push_back(lx::ui::lv_btnmatrix::LV_BTNMATRIX_END_STR);
 
@@ -55,6 +64,9 @@ void SkillScreen::handleButtonClick_(lv_obj_t* p_btnMatrix, lv_event_t event) {
     if (event != LV_EVENT_CLICKED) return;
 
     auto skillToWrite = s_instance.m_buttonSkillIds[lv_btnmatrix_get_active_btn(p_btnMatrix)];
+    if (skillToWrite < 0) {
+        return s_instance.m_basicScreen.returnToPreviousScreen();
+    }
 
     auto addressToWrite = s_instance.m_gearWriteAddress + offsetof(Cmn::Def::Gear, mMainSkillId);
     auto writingSlotCount = 0u;

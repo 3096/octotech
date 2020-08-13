@@ -21,6 +21,8 @@ class SkillScreen : public lx::ui::IScreen {
     uint64_t m_gearWriteAddress;
 
     // ui
+    static constexpr auto NO_SKILL_STR = "No ability availble for selected combination";
+
     static constexpr auto BUTTONS_PER_LINE = 4;
     lv_obj_t* mp_buttonMatrix;
     std::vector<const char*> m_buttonMatrixStrs;
