@@ -41,7 +41,7 @@ include $(DEVKITPRO)/libnx/switch_rules
 APP_TITLE	:=	OctoTech V2
 APP_TITLEID :=  020000100D0A0906
 APP_AUTHOR	:=	3096
-APP_VERSION	:=	w0.1.0
+APP_VERSION	:=	w0.0.1
 
 TARGET		:=	octotech
 BUILD		:=	build
@@ -199,17 +199,20 @@ zip:
 	@$(MAKE) all --no-print-directory
 ifneq ($(strip $(APP_JSON)),)
 	@mkdir -p $(TEMP_DIR)/atmosphere/contents/$(APP_TITLEID)/
-	@cp romfs.bin $(TEMP_DIR)/atmosphere/contents/$(APP_TITLEID)/romfs.bin
 	@cp $(TARGET).nsp $(TEMP_DIR)/atmosphere/contents/$(APP_TITLEID)/exefs.nsp
-	@cp ../LICENSE $(TEMP_DIR)/
-	@cd $(TEMP_DIR)/; zip tmp.zip LICENSE atmosphere -r
+	@mkdir -p $(TEMP_DIR)/switch/octotech/
+	@cp romfs.bin $(TEMP_DIR)/switch/octotech/romfs.bin
+	@cp ../LICENSE $(TEMP_DIR)/switch/octotech/LICENSE
+	@echo https://github.com/3096/octotech > $(TEMP_DIR)/switch/octotech/SOURCE
+	@cd $(TEMP_DIR)/; zip tmp.zip atmosphere switch -r
 endif
-	@mkdir -p $(TEMP_DIR_OVL)/atmosphere/contents/$(APP_TITLEID)/
-	@cp romfs.bin $(TEMP_DIR_OVL)/atmosphere/contents/$(APP_TITLEID)/romfs.bin
 	@mkdir -p $(TEMP_DIR_OVL)/switch/.overlays/
 	@cp $(TARGET).nro $(TEMP_DIR_OVL)/switch/.overlays/$(TARGET).ovl
-	@cp ../LICENSE $(TEMP_DIR_OVL)/
-	@cd $(TEMP_DIR_OVL)/; zip tmp.zip LICENSE atmosphere switch -r
+	@mkdir -p $(TEMP_DIR_OVL)/switch/octotech/
+	@cp romfs.bin $(TEMP_DIR_OVL)/switch/octotech/romfs.bin
+	@cp ../LICENSE $(TEMP_DIR_OVL)/switch/octotech/LICENSE
+	@echo https://github.com/3096/octotech > $(TEMP_DIR_OVL)/switch/octotech/SOURCE
+	@cd $(TEMP_DIR_OVL)/; zip tmp.zip switch -r
 
 #---------------------------------------------------------------------------------
 release: zip

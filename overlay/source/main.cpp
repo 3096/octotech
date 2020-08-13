@@ -30,7 +30,7 @@ void __appInit(void) {
     TRY_FATAL(hidInitialize());
     TRY_FATAL(fsInitialize());
     TRY_FATAL(fsdevMountSdmc());
-    TRY_FATAL(romfsMountFromFsdev("sdmc:/atmosphere/contents/020000100D0A0906/romfs.bin", 0, "romfs"));
+    TRY_FATAL(romfsMountFromFsdev("sdmc:/switch/octotech/romfs.bin", 0, "romfs"));
 
     auto socketConfig = SocketInitConfig{.bsdsockets_version = 1,
                                          .tcp_tx_buf_size = 0x800,
