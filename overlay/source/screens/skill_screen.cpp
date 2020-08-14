@@ -99,9 +99,9 @@ void SkillScreen::handleButtonClick_(lv_obj_t* p_btnMatrix, lv_event_t event) {
             s_instance.m_gearWriteAddress + offsetof(Cmn::Def::Gear, mUnlockedSlotCount), totalSlotCount);
     }
 
-    if (curGear.mUnlockedSlotCount < totalSlotCount) {
-        MemoryReader::writeToAddr<decltype(curGear.mUnlockedSlotCount)>(
-            s_instance.m_gearWriteAddress + offsetof(Cmn::Def::Gear, mUnlockedSlotCount), totalSlotCount);
+    if (curGear.mUnlockedSkillCount < totalSlotCount) {
+        MemoryReader::writeToAddr<decltype(curGear.mUnlockedSkillCount)>(
+            s_instance.m_gearWriteAddress + offsetof(Cmn::Def::Gear, mUnlockedSkillCount), totalSlotCount);
     }
 
     // write the skills
