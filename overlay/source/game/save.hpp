@@ -7,7 +7,8 @@ namespace save {
 
 static constexpr auto SP_SAVEDATA_OFFSET_310 = 0x41C4828;
 static constexpr auto SP_SAVEDATA_OFFSET_522 = 0x2D669F8;
-static constexpr auto SP_SAVEDATA_OFFSET = SP_SAVEDATA_OFFSET_522;  // TODO: make versions
+static constexpr auto SP_SAVEDATA_OFFSET_531 = 0x2D70A00;
+static constexpr auto SP_SAVEDATA_OFFSET = SP_SAVEDATA_OFFSET_531;  // TODO: make versions
 
 static inline auto getSaveData() {
     return MemoryReader::readDataFromAddr<Cmn::SaveData>(
